@@ -28,6 +28,7 @@ patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
 cd $WORKSPACE/temp
 zip -qr9XD omni.ja *
 cp omni.ja $WORKSPACE/firefox/browser/
+rm -rf $WORKSPACE/temp
 
 cd /home/mozilla/e2e_test_files/
 if [ -e test_1_browser_call.py ]; then
