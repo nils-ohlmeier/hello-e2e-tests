@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -x -e
 
 curl http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tar.bz2 > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
 tar xvjf firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
@@ -47,7 +47,7 @@ cd $WORKSPACE/marionette/transport
 python setup.py install
 
 cd $WORKSPACE
-pip install pyperclip
+pip install --upgrade pyperclip
 
 # Ugly workaround for marionette always creating new profiles in /tmp/
 rm -r /tmp/*.mozrunner
