@@ -23,7 +23,10 @@ patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
 # modify the TokBox SDK within Firefox to use Firefox fake A/V sources
 mkdir $WORKSPACE/temp
 cd $WORKSPACE/temp
-unzip $WORKSPACE/firefox/browser/omni.ja
+# the omni.ja contains errors
+set +e
+unzip -q $WORKSPACE/firefox/browser/omni.ja
+set -e
 cd chrome/browser/content/browser/loop/libs/
 patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
 #cp /home/mozilla/e2e_test_files/sdk.js .
