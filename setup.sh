@@ -1,4 +1,6 @@
-#!/bin/bash -x -e
+#!/bin/bash
+
+set -ex
 
 curl http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tar.bz2 > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
 tar xvjf firefox-latest-nightly.en-US.linux-x86_64.tar.bz2

@@ -1,4 +1,6 @@
-#!/bin/bash -x -e
+#!/bin/bash
+
+set -ex
 
 source ~/venv/bin/activate
 
