@@ -2,10 +2,19 @@
 
 set -ex
 
-curl http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tar.bz2 > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-tar xvjf firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
+FIREFOX_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
+TESTS_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tests.zip
 
-curl http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tests.zip > firefox-latest-nightly.en-US.linux-x86_64.tests.zip
+WGET=`which wget`
+if [ ! -z ${WGET} ]; then
+  ${WGET} ${FIREFOX_URL}
+  ${WGET} ${TESTS_URL}
+else
+  curl ${FIREFOX_URL} > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
+  curl ${TESTS_URL} > firefox-latest-nightly.en-US.linux-x86_64.tests.zip
+fi
+
+tar xvjf firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
 unzip -u -o firefox-latest-nightly.en-US.linux-x86_64.tests.zip 'marionette/*'
 
 cd $WORKSPACE/loop-server
