@@ -7,8 +7,8 @@ TESTS_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightl
 
 WGET=`which wget`
 if [ ! -z ${WGET} ]; then
-  ${WGET} ${FIREFOX_URL}
-  ${WGET} ${TESTS_URL}
+  ${WGET} --no-verbose ${FIREFOX_URL}
+  ${WGET} --no-verbose ${TESTS_URL}
 else
   curl ${FIREFOX_URL} > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
   curl ${TESTS_URL} > firefox-latest-nightly.en-US.linux-x86_64.tests.zip
