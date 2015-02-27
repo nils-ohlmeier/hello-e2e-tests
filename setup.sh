@@ -25,8 +25,8 @@ cp /home/mozilla/e2e_test_files/dev.json $WORKSPACE/loop-server/config/
 cd $WORKSPACE/loop-standalone
 npm install
 # modify the TokBox SDK on the standalone server to use Firefox fake A/V sources
-cd content/shared/libs
-patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
+#cd content/shared/libs
+#patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
 #cp /home/mozilla/e2e_test_files/sdk.js .
 
 # modify the TokBox SDK within Firefox to use Firefox fake A/V sources
