@@ -30,19 +30,19 @@ patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
 #cp /home/mozilla/e2e_test_files/sdk.js .
 
 # modify the TokBox SDK within Firefox to use Firefox fake A/V sources
-mkdir $WORKSPACE/temp
-cd $WORKSPACE/temp
+#mkdir $WORKSPACE/temp
+#cd $WORKSPACE/temp
 # the omni.ja contains errors
-set +e
-unzip -q $WORKSPACE/firefox/browser/omni.ja
-set -e
-cd chrome/browser/content/browser/loop/libs/
-patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
+#set +e
+#unzip -q $WORKSPACE/firefox/browser/omni.ja
+#set -e
+#cd chrome/browser/content/browser/loop/libs/
+#patch -p0 < /home/mozilla/e2e_test_files/sdk.js.patch
 #cp /home/mozilla/e2e_test_files/sdk.js .
-cd $WORKSPACE/temp
-zip -qr9XD omni.ja *
-cp omni.ja $WORKSPACE/firefox/browser/
-rm -rf $WORKSPACE/temp
+#cd $WORKSPACE/temp
+#zip -qr9XD omni.ja *
+#cp omni.ja $WORKSPACE/firefox/browser/
+#rm -rf $WORKSPACE/temp
 
 cd /home/mozilla/e2e_test_files/
 if [ -e test_1_browser_call.py ]; then
