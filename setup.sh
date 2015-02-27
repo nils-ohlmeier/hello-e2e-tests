@@ -64,5 +64,5 @@ cd $WORKSPACE
 pip install --upgrade pyperclip
 
 # Ugly workaround for marionette always creating new profiles in /tmp/
-rm -r /tmp/*.mozrunner
+rm -rf /tmp/*.mozrunner
 
