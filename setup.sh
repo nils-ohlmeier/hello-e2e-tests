@@ -33,7 +33,9 @@ if [ -e config.py ]; then
   cp config.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
 fi
 
-source ~/venv/bin/activate
+cd $WORKSPACE
+virtualenv venv
+source $WORKSPACE/venv/bin/activate
 
 cd $WORKSPACE/marionette
 python setup.py install

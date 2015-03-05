@@ -2,7 +2,7 @@
 
 set -ex
 
-source ~/venv/bin/activate
+source $WORKSPACE/venv/bin/activate
 
 export DISPLAY=:0
 export LOOP_SERVER=$WORKSPACE/loop-server
