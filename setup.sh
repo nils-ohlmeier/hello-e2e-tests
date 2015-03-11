@@ -25,14 +25,6 @@ cp /home/mozilla/e2e_test_files/dev.json $WORKSPACE/loop-server/config/
 cd $WORKSPACE/loop-standalone
 npm install
 
-cd /home/mozilla/e2e_test_files/
-if [ -e test_1_browser_call.py ]; then
-  cp test_1_browser_call.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
-fi
-if [ -e config.py ]; then
-  cp config.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
-fi
-
 cd $WORKSPACE
 virtualenv venv
 source $WORKSPACE/venv/bin/activate
@@ -49,3 +41,13 @@ pip install --upgrade pyperclip
 # Ugly workaround for marionette always creating new profiles in /tmp/
 rm -rf /tmp/*.mozrunner
 
+cd /home/mozilla/e2e_test_files/
+if [ -e test_1_browser_call.py ]; then
+  cp -v test_1_browser_call.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
+fi
+if [ -e config.py ]; then
+  cp -v config.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
+fi
+if [ -e marionette.py ]; then
+  cp -v marionette.py $WORKSPACE/venv/lib/python2.7/site-packages/marionette_driver-0.2-py2.7.egg/marionette_driver/
+fi
