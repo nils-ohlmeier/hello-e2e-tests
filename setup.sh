@@ -2,25 +2,30 @@
 
 set -ex
 
-FIREFOX_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-TESTS_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tests.zip
+BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases
+BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightly-linux64/ws/releases
+BINARY_NAME=firefox-latest-nightly.en-US.linux-x86_64
+FIREFOX_URL=${BASE_URL_FIREFOX}/${BINARY_NAME}.dmg
+TESTS_URL=${BASE_URL_TESTS}/${BINARY_NAME}.tests.zip
+
+KEY_FILE=/home/mozilla/e2e_test_files/dev.json
 
 WGET=`which wget`
 if [ ! -z ${WGET} ]; then
   ${WGET} --no-verbose ${FIREFOX_URL}
   ${WGET} --no-verbose ${TESTS_URL}
 else
-  curl ${FIREFOX_URL} > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-  curl ${TESTS_URL} > firefox-latest-nightly.en-US.linux-x86_64.tests.zip
+  curl ${FIREFOX_URL} > ${BINARY_NAME}.tar.bz2
+  curl ${TESTS_URL} > ${BINARY_NAME}.tests.zip
 fi
 
-tar xvjf firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-unzip -u -o firefox-latest-nightly.en-US.linux-x86_64.tests.zip 'marionette/*'
+tar xvjf ${BINARY_NAME}.tar.bz2
+unzip -u -o ${BINARY_NAME}.tests.zip 'marionette/*' 'mozbase/*'
 
 cd $WORKSPACE/loop-server
 npm install
 # This is needed because of the TokBox keys
-cp /home/mozilla/e2e_test_files/dev.json $WORKSPACE/loop-server/config/
+cp ${KEY_FILE} $WORKSPACE/loop-server/config/
 
 cd $WORKSPACE/loop-standalone
 npm install
@@ -29,10 +34,18 @@ cd $WORKSPACE
 virtualenv venv
 source $WORKSPACE/venv/bin/activate
 
-cd $WORKSPACE/marionette
-python setup.py install
+# Install these first from the source so that we're using the in-tree version
+# from the test files.
+cd $WORKSPACE/mozbase
+python setup_development.py
 
 cd $WORKSPACE/marionette/transport
+python setup.py install
+
+cd $WORKSPACE/marionette/driver
+python setup.py install
+
+cd $WORKSPACE/marionette
 python setup.py install
 
 cd $WORKSPACE
