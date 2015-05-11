@@ -2,25 +2,61 @@
 
 set -ex
 
-FIREFOX_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-TESTS_URL=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightly-linux64/ws/releases/firefox-latest-nightly.en-US.linux-x86_64.tests.zip
+if [ "$(uname)" == "Darwin" ]; then
+  OS=MAC
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  OS=LINUX
+else
+  echo "Unsupported platform"
+  exit -1
+fi
+BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job
+BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job
+BINARY_NAME=firefox-latest-nightly.en-US
+LINUX_POSTFIX=tar.bz2
+MAC_POSTFIX=dmg
+TESTS_POSTFIX=tests.zip
+if [ "${OS}" == "MAC" ]; then
+  BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-mac
+  BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-mac
+  BINARY_NAME=${BINARY_NAME}.mac
+  FIREFOX_ARCHIVE=${BINARY_NAME}.${MAC_POSTFIX}
+elif [ "${OS}" == "LINUX" ]; then
+  BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-linux64
+  BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-linux64
+  BINARY_NAME=${BINARY_NAME}.linux-x86_64
+  FIREFOX_ARCHIVE=${BINARY_NAME}.${LINUX_POSTFIX}
+fi
+BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/ws/releases
+BASE_URL_TESTS=${BASE_URL_TESTS}/ws/releases
+TESTS_ARCHIVE=${BINARY_NAME}.${TESTS_POSTFIX}
+FIREFOX_URL=${BASE_URL_FIREFOX}/${FIREFOX_ARCHIVE}
+TESTS_URL=${BASE_URL_TESTS}/${TESTS_ARCHIVE}
+
+KEY_FILE=/home/mozilla/e2e_test_files/dev.json
 
 WGET=`which wget`
 if [ ! -z ${WGET} ]; then
   ${WGET} --no-verbose ${FIREFOX_URL}
   ${WGET} --no-verbose ${TESTS_URL}
 else
-  curl ${FIREFOX_URL} > firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-  curl ${TESTS_URL} > firefox-latest-nightly.en-US.linux-x86_64.tests.zip
+  curl ${FIREFOX_URL} > ${FIREFOX_ARCHIVE}
+  curl ${TESTS_URL} > ${TESTS_ARCHIVE}
 fi
 
-tar xvjf firefox-latest-nightly.en-US.linux-x86_64.tar.bz2
-unzip -u -o firefox-latest-nightly.en-US.linux-x86_64.tests.zip 'marionette/*'
+if [ ${OS} == "MAC" ]; then
+  hdiutil attach -quiet -mountpoint /Volumes/FF ${FIREFOX_ARCHIVE}
+  cp -r /Volumes/FF/FirefoxNightly.app .
+  umount /Volumes/FF
+elif [ ${OS} == "LINUX" ]; then
+  tar xvjf ${FIREFOX_ARCHIVE}
+fi
+unzip -u -o ${TESTS_ARCHIVE} 'marionette/*' 'mozbase/*'
 
 cd $WORKSPACE/loop-server
 npm install
 # This is needed because of the TokBox keys
-cp /home/mozilla/e2e_test_files/dev.json $WORKSPACE/loop-server/config/
+cp ${KEY_FILE} $WORKSPACE/loop-server/config/
 
 cd $WORKSPACE/loop-standalone
 npm install
@@ -29,10 +65,18 @@ cd $WORKSPACE
 virtualenv venv
 source $WORKSPACE/venv/bin/activate
 
-cd $WORKSPACE/marionette
-python setup.py install
+# Install these first from the source so that we're using the in-tree version
+# from the test files.
+cd $WORKSPACE/mozbase
+python setup_development.py
 
 cd $WORKSPACE/marionette/transport
+python setup.py install
+
+cd $WORKSPACE/marionette/driver
+python setup.py install
+
+cd $WORKSPACE/marionette
 python setup.py install
 
 cd $WORKSPACE
