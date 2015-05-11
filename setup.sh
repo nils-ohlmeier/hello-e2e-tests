@@ -2,11 +2,36 @@
 
 set -ex
 
-BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job/firefox-nightly-linux64/ws/releases
-BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job/tests-nightly-linux64/ws/releases
-BINARY_NAME=firefox-latest-nightly.en-US.linux-x86_64
-FIREFOX_URL=${BASE_URL_FIREFOX}/${BINARY_NAME}.dmg
-TESTS_URL=${BASE_URL_TESTS}/${BINARY_NAME}.tests.zip
+if [ "$(uname)" == "Darwin" ]; then
+  OS=MAC
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+  OS=LINUX
+else
+  echo "Unsupported platform"
+  exit -1
+fi
+BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job
+BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job
+BINARY_NAME=firefox-latest-nightly.en-US
+LINUX_POSTFIX=tar.bz2
+MAC_POSTFIX=dmg
+TESTS_POSTFIX=tests.zip
+if [ "${OS}" == "MAC" ]; then
+  BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-mac
+  BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-mac
+  BINARY_NAME=${BINARY_NAME}.mac
+  FIREFOX_ARCHIVE=${BINARY_NAME}.${MAC_POSTFIX}
+elif [ "${OS}" == "LINUX" ]; then
+  BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-linux64
+  BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-linux64
+  BINARY_NAME=${BINARY_NAME}.linux-x86_64
+  FIREFOX_ARCHIVE=${BINARY_NAME}.${LINUX_POSTFIX}
+fi
+BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/ws/releases
+BASE_URL_TESTS=${BASE_URL_TESTS}/ws/releases
+TESTS_ARCHIVE=${BINARY_NAME}.${TESTS_POSTFIX}
+FIREFOX_URL=${BASE_URL_FIREFOX}/${FIREFOX_ARCHIVE}
+TESTS_URL=${BASE_URL_TESTS}/${TESTS_ARCHIVE}
 
 KEY_FILE=/home/mozilla/e2e_test_files/dev.json
 
@@ -15,12 +40,18 @@ if [ ! -z ${WGET} ]; then
   ${WGET} --no-verbose ${FIREFOX_URL}
   ${WGET} --no-verbose ${TESTS_URL}
 else
-  curl ${FIREFOX_URL} > ${BINARY_NAME}.tar.bz2
-  curl ${TESTS_URL} > ${BINARY_NAME}.tests.zip
+  curl ${FIREFOX_URL} > ${FIREFOX_ARCHIVE}
+  curl ${TESTS_URL} > ${TESTS_ARCHIVE}
 fi
 
-tar xvjf ${BINARY_NAME}.tar.bz2
-unzip -u -o ${BINARY_NAME}.tests.zip 'marionette/*' 'mozbase/*'
+if [ ${OS} == "MAC" ]; then
+  hdiutil attach -quiet -mountpoint /Volumes/FF ${FIREFOX_ARCHIVE}
+  cp -r /Volumes/FF/FirefoxNightly.app .
+  umount /Volumes/FF
+elif [ ${OS} == "LINUX" ]; then
+  tar xvjf ${FIREFOX_ARCHIVE}
+fi
+unzip -u -o ${TESTS_ARCHIVE} 'marionette/*' 'mozbase/*'
 
 cd $WORKSPACE/loop-server
 npm install
