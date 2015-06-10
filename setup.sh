@@ -84,6 +84,9 @@ pip install --upgrade pyperclip
 
 # Ugly workaround for marionette always creating new profiles in /tmp/
 rm -rf /tmp/*.mozrunner
+# Ugly workaround for loop server filling up /tmp/
+# https://bugzilla.mozilla.org/show_bug.cgi?id=1173538
+rm -rf /tmp/*.heapsnapshot
 
 cd /home/mozilla/e2e_test_files/
 if [ -e test_1_browser_call.py ]; then
