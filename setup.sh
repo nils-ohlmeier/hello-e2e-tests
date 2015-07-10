@@ -65,6 +65,11 @@ cd $WORKSPACE
 virtualenv venv
 source $WORKSPACE/venv/bin/activate
 
+# mozrunner pulls in mock on its dependency chain
+# mock-1.1.1 uses newest setuptools syntax, so we need to upgrade it
+# within the venv https://github.com/testing-cabal/mock/issues/261
+pip install -U setuptools
+
 # Install these first from the source so that we're using the in-tree version
 # from the test files.
 cd $WORKSPACE/mozbase
