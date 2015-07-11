@@ -15,7 +15,7 @@ BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job
 BINARY_NAME=firefox-latest-nightly.en-US
 LINUX_POSTFIX=tar.bz2
 MAC_POSTFIX=dmg
-TESTS_POSTFIX=tests.zip
+TESTS_POSTFIX=common.tests.zip
 if [ "${OS}" == "MAC" ]; then
   BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-mac
   BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-mac
