@@ -1,0 +1,11 @@
+.DS_Store
+Firefox*.app
+dev.json
+firefox-*
+gecko.log
+loop-server
+loop-standalone
+marionette
+mozbase
+release-firefox.dmg
+venv

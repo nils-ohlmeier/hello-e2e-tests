@@ -10,9 +10,13 @@ else
   echo "Unsupported platform"
   exit -1
 fi
+HOME_LOCATION=${HOME_LOCATION:-/home/mozilla/e2e_test_files}
+# This may be overriden below with OVERRIDE_BASE_URL_FIREFOX
 BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job
+# This may be overriden below with OVERRIDE_BASE_URL_TESTS
 BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job
-BINARY_NAME=firefox-latest-nightly.en-US
+RELEASE_URL_FIREFOX=${RELEASE_URL_FIREFOX:-http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job}
+BINARY_NAME=${BINARY_NAME:-firefox-latest-nightly.en-US}
 LINUX_POSTFIX=tar.bz2
 MAC_POSTFIX=dmg
 TESTS_POSTFIX=common.tests.zip
@@ -27,13 +31,13 @@ elif [ "${OS}" == "LINUX" ]; then
   BINARY_NAME=${BINARY_NAME}.linux-x86_64
   FIREFOX_ARCHIVE=${BINARY_NAME}.${LINUX_POSTFIX}
 fi
-BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/ws/releases
-BASE_URL_TESTS=${BASE_URL_TESTS}/ws/releases
+BASE_URL_FIREFOX=${OVERRIDE_BASE_URL_FIREFOX:-${BASE_URL_FIREFOX}/ws/releases}
+BASE_URL_TESTS=${OVERRIDE_BASE_URL_TESTS:-${BASE_URL_TESTS}/ws/releases}
 TESTS_ARCHIVE=${BINARY_NAME}.${TESTS_POSTFIX}
 FIREFOX_URL=${BASE_URL_FIREFOX}/${FIREFOX_ARCHIVE}
 TESTS_URL=${BASE_URL_TESTS}/${TESTS_ARCHIVE}
 
-KEY_FILE=/home/mozilla/e2e_test_files/dev.json
+KEY_FILE=${HOME_LOCATION}/dev.json
 
 WGET=`which wget`
 if [ ! -z ${WGET} ]; then
@@ -93,7 +97,7 @@ rm -rf /tmp/*.mozrunner
 # https://bugzilla.mozilla.org/show_bug.cgi?id=1173538
 rm -rf /tmp/*.heapsnapshot
 
-cd /home/mozilla/e2e_test_files/
+cd ${HOME_LOCATION}
 if [ -e test_1_browser_call.py ]; then
   cp -v test_1_browser_call.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
 fi
