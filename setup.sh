@@ -99,10 +99,10 @@ rm -rf /tmp/*.heapsnapshot
 
 cd ${HOME_LOCATION}
 if [ -e test_1_browser_call.py ]; then
-  cp -v test_1_browser_call.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
+  cp -v test_1_browser_call.py $WORKSPACE/marionette/tests/browser/extensions/loop/test/functional/
 fi
 if [ -e config.py ]; then
-  cp -v config.py $WORKSPACE/marionette/tests/browser/components/loop/test/functional/
+  cp -v config.py $WORKSPACE/marionette/tests/browser/extensions/loop/test/functional/
 fi
 if [ -e marionette.py ]; then
   cp -v marionette.py $WORKSPACE/venv/lib/python2.7/site-packages/marionette_driver-0.2-py2.7.egg/marionette_driver/
