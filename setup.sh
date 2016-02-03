@@ -79,9 +79,6 @@ pip install -U setuptools
 cd $WORKSPACE/mozbase
 python setup_development.py
 
-cd $WORKSPACE/marionette/transport
-python setup.py install
-
 cd $WORKSPACE/marionette/driver
 python setup.py install
 
