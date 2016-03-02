@@ -79,7 +79,7 @@ pip install -U setuptools
 cd $WORKSPACE/mozbase
 python setup_development.py
 
-cd $WORKSPACE/marionette/driver
+cd $WORKSPACE/marionette/client
 python setup.py install
 
 cd $WORKSPACE/marionette
