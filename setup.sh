@@ -64,6 +64,7 @@ cp ${KEY_FILE} $WORKSPACE/loop-server/config/
 
 cd $WORKSPACE/loop-standalone
 npm install
+make build
 
 cd $WORKSPACE
 virtualenv venv
