@@ -11,4 +11,4 @@ export STANDALONE_SERVER=$WORKSPACE/loop-standalone
 #export STANDALONE_SERVER=/home/mozilla/loop-standalone
 
 cd $WORKSPACE
-python $WORKSPACE/marionette/marionette/runtests.py --type=browser --binary=$WORKSPACE/FirefoxNightly.app/Contents/MacOS/firefox --workspace=$WORKSPACE $WORKSPACE/loop-standalone/test/functional/
+python $WORKSPACE/marionette/marionette/runtests.py --type=browser --binary=$WORKSPACE/firefox/firefox --workspace=$WORKSPACE $WORKSPACE/loop-standalone/test/functional/manifest.ini
