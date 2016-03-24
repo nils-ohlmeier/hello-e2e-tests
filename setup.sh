@@ -97,7 +97,7 @@ rm -rf /tmp/*.heapsnapshot
 
 cd ${HOME_LOCATION}
 if [ -e test_1_browser_call.py ]; then
-  cp -v test_1_browser_call.py $WORKSPACE/marionette/tests/browser/extensions/loop/test/functional/
+  cp -v test_1_browser_call.py $WORKSPACE/loop-standalone/test/functional/
 fi
 if [ -e config.py ]; then
   cp -v config.py $WORKSPACE/marionette/tests/browser/extensions/loop/test/functional/
