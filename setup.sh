@@ -13,39 +13,29 @@ fi
 HOME_LOCATION=${HOME_LOCATION:-/home/mozilla/e2e_test_files}
 # This may be overriden below with OVERRIDE_BASE_URL_FIREFOX
 BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job
-# This may be overriden below with OVERRIDE_BASE_URL_TESTS
-BASE_URL_TESTS=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/tests/job
 RELEASE_URL_FIREFOX=${RELEASE_URL_FIREFOX:-http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job}
 BINARY_NAME=${BINARY_NAME:-firefox-latest-nightly.en-US}
 LINUX_POSTFIX=tar.bz2
 MAC_POSTFIX=dmg
-TESTS_POSTFIX=common.tests.zip
 if [ "${OS}" == "MAC" ]; then
   BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-mac
-  BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-mac
   BINARY_NAME=${BINARY_NAME}.mac
   FIREFOX_ARCHIVE=${BINARY_NAME}.${MAC_POSTFIX}
 elif [ "${OS}" == "LINUX" ]; then
   BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-linux64
-  BASE_URL_TESTS=${BASE_URL_TESTS}/tests-nightly-linux64
   BINARY_NAME=${BINARY_NAME}.linux-x86_64
   FIREFOX_ARCHIVE=${BINARY_NAME}.${LINUX_POSTFIX}
 fi
 BASE_URL_FIREFOX=${OVERRIDE_BASE_URL_FIREFOX:-${BASE_URL_FIREFOX}/ws/releases}
-BASE_URL_TESTS=${OVERRIDE_BASE_URL_TESTS:-${BASE_URL_TESTS}/ws/releases}
-TESTS_ARCHIVE=${BINARY_NAME}.${TESTS_POSTFIX}
 FIREFOX_URL=${BASE_URL_FIREFOX}/${FIREFOX_ARCHIVE}
-TESTS_URL=${BASE_URL_TESTS}/${TESTS_ARCHIVE}
 
 KEY_FILE=${HOME_LOCATION}/dev.json
 
 WGET=`which wget`
 if [ ! -z ${WGET} ]; then
   ${WGET} --no-verbose ${FIREFOX_URL}
-  ${WGET} --no-verbose ${TESTS_URL}
 else
   curl ${FIREFOX_URL} > ${FIREFOX_ARCHIVE}
-  curl ${TESTS_URL} > ${TESTS_ARCHIVE}
 fi
 
 if [ ${OS} == "MAC" ]; then
@@ -55,7 +45,6 @@ if [ ${OS} == "MAC" ]; then
 elif [ ${OS} == "LINUX" ]; then
   tar xvjf ${FIREFOX_ARCHIVE}
 fi
-unzip -u -o ${TESTS_ARCHIVE} 'marionette/*' 'mozbase/*'
 
 cd $WORKSPACE/loop-server
 npm install
@@ -66,42 +55,10 @@ cd $WORKSPACE/loop-standalone
 npm install
 make build
 
-cd $WORKSPACE
-virtualenv venv
-source $WORKSPACE/venv/bin/activate
-
-# mozrunner pulls in mock on its dependency chain
-# mock-1.1.1 uses newest setuptools syntax, so we need to upgrade it
-# within the venv https://github.com/testing-cabal/mock/issues/261
-pip install -U setuptools
-
-# Install these first from the source so that we're using the in-tree version
-# from the test files.
-cd $WORKSPACE/mozbase
-python setup_development.py
-
-cd $WORKSPACE/marionette/client
-python setup.py install
-
-cd $WORKSPACE/marionette
-python setup.py install
-
-cd $WORKSPACE
-pip install --upgrade pyperclip
-
-# Ugly workaround for marionette always creating new profiles in /tmp/
-rm -rf /tmp/*.mozrunner
-# Ugly workaround for loop server filling up /tmp/
-# https://bugzilla.mozilla.org/show_bug.cgi?id=1173538
-rm -rf /tmp/*.heapsnapshot
-
 cd ${HOME_LOCATION}
 if [ -e test_1_browser_call.py ]; then
   cp -v test_1_browser_call.py $WORKSPACE/loop-standalone/test/functional/
 fi
 if [ -e config.py ]; then
-  cp -v config.py $WORKSPACE/marionette/tests/browser/extensions/loop/test/functional/
-fi
-if [ -e marionette.py ]; then
-  cp -v marionette.py $WORKSPACE/venv/lib/python2.7/site-packages/marionette_driver-0.2-py2.7.egg/marionette_driver/
+  cp -v config.py $WORKSPACE/loop-standalone/test/functional/
 fi
