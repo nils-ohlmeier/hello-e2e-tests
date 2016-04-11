@@ -21,12 +21,12 @@ if [ "${OS}" == "MAC" ]; then
   BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-mac
   BINARY_NAME=${BINARY_NAME}.mac
   FIREFOX_ARCHIVE=${BINARY_NAME}.${MAC_POSTFIX}
-  STACKWALK_BINARY_URL=http://hg.mozilla.org/build/tools/file/tip/breakpad/osx/minidump_stackwalk
+  STACKWALK_BINARY_URL=http://hg.mozilla.org/build/tools/raw-file/tip/breakpad/osx/minidump_stackwalk
 elif [ "${OS}" == "LINUX" ]; then
   BASE_URL_FIREFOX=${BASE_URL_FIREFOX}/firefox-nightly-linux64
   BINARY_NAME=${BINARY_NAME}.linux-x86_64
   FIREFOX_ARCHIVE=${BINARY_NAME}.${LINUX_POSTFIX}
-  STACKWALK_BINARY_URL=http://hg.mozilla.org/build/tools/file/tip/breakpad/linux64/minidump_stackwalk
+  STACKWALK_BINARY_URL=http://hg.mozilla.org/build/tools/raw-file/tip/breakpad/linux64/minidump_stackwalk
 fi
 STACKWALK_BINARY=minidump_stackwalk
 BASE_URL_FIREFOX=${OVERRIDE_BASE_URL_FIREFOX:-${BASE_URL_FIREFOX}/ws/releases}
