@@ -43,6 +43,8 @@ else
   curl ${STACKWALK_BINARY_URL} > ${STACKWALK_BINARY}
 fi
 
+chmod 755 ${STACKWALK_BINARY}
+
 if [ ${OS} == "MAC" ]; then
   hdiutil attach -quiet -mountpoint /Volumes/FF ${FIREFOX_ARCHIVE}
   cp -r /Volumes/FF/FirefoxNightly.app .
