@@ -13,7 +13,6 @@ fi
 HOME_LOCATION=${HOME_LOCATION:-/home/mozilla/e2e_test_files}
 # This may be overriden below with OVERRIDE_BASE_URL_FIREFOX
 BASE_URL_FIREFOX=http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job
-RELEASE_URL_FIREFOX=${RELEASE_URL_FIREFOX:-http://pf-jenkins.qa.mtv2.mozilla.com:8080/view/firefox/job}
 BINARY_NAME=${BINARY_NAME:-firefox-latest-nightly.en-US}
 LINUX_POSTFIX=tar.bz2
 MAC_POSTFIX=dmg
@@ -68,4 +67,7 @@ if [ -e test_1_browser_call.py ]; then
 fi
 if [ -e config.py ]; then
   cp -v config.py $WORKSPACE/loop-standalone/test/functional/
+fi
+if [ -e Makefile ]; then
+  cp -v Makefile $WORKSPACE/loop-standalone/
 fi
