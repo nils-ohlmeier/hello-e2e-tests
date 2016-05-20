@@ -27,6 +27,7 @@ DATED_DIRS=`sed -e "s|\(^....\)\(..\)\(..\)\(..\)\(..\)\(..\).*|\1/\2/\1-\2-\3-\
 
 export DISPLAY=:0
 export LOOP_SERVER=$WORKSPACE/loop-server
+export TEST_SERVER=local
 export STANDALONE_SERVER=$WORKSPACE/loop-standalone
 export MINIDUMP_STACKWALK=$WORKSPACE/minidump_stackwalk
 export SYMBOLS_PATH=https://ftp.mozilla.org/pub/firefox/nightly/${DATED_DIRS}-mozilla-central/firefox-${MAX_VERSION}.en-US.${PLATFORM_SHORT}.crashreporter-symbols.zip
